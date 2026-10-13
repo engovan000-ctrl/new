@@ -1,0 +1,1281 @@
+/* ========================================================
+   ELECTRICAL MACHINES LAB SIMULATOR - STYLESHEET
+   High-Fidelity Virtual Laboratory Instrumentation & Bench
+   ======================================================== */
+
+:root {
+  --bg-main: #090d16;
+  --bg-card: #0f172a;
+  --bg-panel: #1e293b;
+  --border-color: #334155;
+  --border-active: #38bdf8;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #38bdf8;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --meter-glow: rgba(56, 189, 248, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b1120;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Header */
+.lab-header {
+  background: linear-gradient(180deg, #0f172a 0%, #090d16 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.lab-title-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lab-icon-badge {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1px solid #38bdf8;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 22px;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+}
+
+.lab-title-text h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.lab-title-text span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+/* Experiment Selector */
+.exp-dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exp-select {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  min-width: 380px;
+  transition: all 0.2s;
+}
+
+.exp-select:focus, .exp-select:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+/* Nav Tabs */
+.tab-nav {
+  display: flex;
+  background: #0f172a;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  gap: 6px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 12px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-btn:hover {
+  color: #fff;
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: rgba(56, 189, 248, 0.05);
+}
+
+/* Content Container */
+.main-content {
+  flex: 1;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* ========================================================
+   VIRTUAL BENCH & RIGGING LAYOUT
+   ======================================================== */
+.bench-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+}
+
+@media (max-width: 1200px) {
+  .bench-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bench-main-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+/* Meter Array Panel */
+.meters-rack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.meter-unit {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+}
+
+.meter-unit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary);
+}
+
+.meter-header {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.analog-dial-box {
+  width: 100px;
+  height: 60px;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.analog-dial-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.digital-display {
+  background: #030712;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  width: 100%;
+  justify-content: center;
+}
+
+.digital-unit {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-family: sans-serif;
+}
+
+/* ========================================================
+   MACHINERY SIMULATION STAGE & ROTATION INSPECTOR
+   ======================================================== */
+.machinery-stage-wrapper {
+  background: #060911;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Machinery HUD Toolbar */
+.machinery-hud {
+  background: #0b1120;
+  border-bottom: 1px solid #1e293b;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hud-badge-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.06em;
+}
+
+.hud-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.hud-label {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.hud-val {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.hud-center {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.strobe-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.strobe-led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #334155;
+  transition: all 0.05s;
+}
+
+.strobe-led.active {
+  background: #4ade80;
+  box-shadow: 0 0 10px #4ade80, 0 0 16px #4ade80;
+}
+
+.strobe-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.rot-direction-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.rot-arrow {
+  display: inline-block;
+  font-size: 1.1rem;
+  color: #38bdf8;
+  transition: transform 0.1s linear;
+}
+
+.rot-arrow.spinning {
+  animation: spinContinuous 0.6s linear infinite;
+}
+
+@keyframes spinContinuous {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-btn-group {
+  display: flex;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.hud-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hud-toggle-btn:hover {
+  color: #fff;
+}
+
+.hud-toggle-btn.active {
+  background: #0284c7;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.4);
+}
+
+/* Machinery Stage Viewport */
+.machinery-stage {
+  min-height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, #0d1527 0%, #060911 100%);
+}
+
+.assembly-view {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* 1. Cooling Fan Cowling */
+.fan-cowl-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.fan-housing {
+  width: 90px;
+  height: 110px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 3px solid #475569;
+  border-radius: 14px 6px 6px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+}
+
+.cooling-fan-svg {
+  width: 76px;
+  height: 76px;
+  position: relative;
+  z-index: 2;
+}
+
+.fan-grill {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 6px;
+  right: 6px;
+  border-radius: 10px 4px 4px 10px;
+  border: 1px dashed rgba(255,255,255,0.15);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.fan-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 2. Motor Main Stator Body */
+.motor-body {
+  width: 170px;
+  height: 130px;
+  background: linear-gradient(180deg, #334155 0%, #1e293b 50%, #0f172a 100%);
+  border: 3px solid #64748b;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.motor-terminal-box {
+  position: absolute;
+  top: -14px;
+  width: 50px;
+  height: 14px;
+  background: #1e293b;
+  border: 2px solid #64748b;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px;
+}
+
+.term-wire {
+  width: 4px;
+  height: 8px;
+  border-radius: 2px;
+}
+.w-red { background: #ef4444; }
+.w-blue { background: #38bdf8; }
+.w-black { background: #111827; border: 0.5px solid #64748b; }
+
+.motor-fins {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.motor-fin {
+  height: 4px;
+  background: #475569;
+  border-radius: 2px;
+}
+
+.motor-nameplate-plate {
+  position: relative;
+  z-index: 2;
+  background: #e2e8f0;
+  color: #0f172a;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* 3. Shaft Coupling Zone */
+.shaft-coupling-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin: 0 5px;
+}
+
+.tachometer-sensor-mount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.tacho-laser-emitter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tacho-lens {
+  width: 14px;
+  height: 10px;
+  background: #1e293b;
+  border: 1px solid #64748b;
+  border-radius: 2px;
+}
+
+.tacho-laser-beam {
+  width: 2px;
+  height: 18px;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444, 0 0 10px #f87171;
+  opacity: 0.85;
+}
+
+.tacho-text {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.motor-shaft {
+  width: 75px;
+  height: 26px;
+  background: linear-gradient(180deg, #94a3b8 0%, #f1f5f9 35%, #94a3b8 70%, #475569 100%);
+  border: 1px solid #475569;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+.shaft-cylinder-pattern {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.3) 0px, rgba(255,255,255,0.3) 4px, transparent 4px, transparent 18px);
+  background-size: 18px 100%;
+}
+
+.shaft-keyway-strip {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 6px;
+  background: #1e293b;
+  border: 1px solid #0f172a;
+  border-radius: 2px;
+  transition: transform 0.05s linear;
+}
+
+.shaft-reflector-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: #facc15;
+  box-shadow: 0 0 6px #facc15;
+}
+
+/* 4. Brake Drum Assembly Zone */
+.brake-assembly-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.brake-drum-assembly {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brake-drum-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.7));
+}
+
+.brake-belt {
+  position: absolute;
+  top: -24px;
+  bottom: -24px;
+  width: 16px;
+  background: #78350f;
+  border-left: 2.5px solid #451a03;
+  border-right: 2.5px solid #451a03;
+  box-shadow: 0 0 8px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+.belt-stripes {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 4px, transparent 4px, transparent 14px);
+}
+
+.drum-caption {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+/* 5. Spring Balance Tension Rig */
+.spring-balance-rig {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.balance-gauge {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 140px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+/* CUTAWAY VIEW */
+.cutaway-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  padding: 10px;
+  flex-wrap: wrap;
+}
+
+.cutaway-svg-box {
+  width: 260px;
+  height: 260px;
+  position: relative;
+}
+
+.cutaway-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+}
+
+.cutaway-legend {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-item {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.leg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 120px;
+}
+
+.balance-gauge span {
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+/* Wiring Canvas Section */
+.wiring-section {
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: #090d16;
+  overflow: hidden;
+}
+
+.wiring-toolbar {
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wire-color-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s;
+}
+
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-dot.active {
+  border-color: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Controls Side Panel */
+.bench-controls-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel-block {
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-block-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 3-Point Starter Interactive Widget */
+.starter-widget {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.starter-studs {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.starter-stud {
+  width: 14px;
+  height: 14px;
+  background: #e2e8f0;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.starter-stud.active {
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+.starter-handle-slider {
+  width: 100%;
+  accent-color: #38bdf8;
+}
+
+/* Sliders & Dials */
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.range-slider {
+  width: 100%;
+  height: 6px;
+  background: #334155;
+  border-radius: 3px;
+  outline: none;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Action Buttons */
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #fff;
+  border-color: #38bdf8;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.btn-success {
+  background: #059669;
+  color: #fff;
+}
+.btn-success:hover {
+  background: #047857;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+.btn-secondary {
+  background: #1e293b;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+.btn-secondary:hover {
+  background: #334155;
+  color: #fff;
+}
+
+/* Main Knife Switch */
+.switch-control-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Status Indicator */
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-pill.live {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+}
+
+.status-pill.off {
+  background: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+  border: 1px solid #64748b;
+}
+
+.status-pill.tripped {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+
+/* ========================================================
+   OBSERVATION TABLE STYLING
+   ======================================================== */
+.table-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.data-table-container {
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  background: #090d16;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.data-table th {
+  background: #111827;
+  color: #94a3b8;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 2px solid #334155;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #1e293b;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.05);
+}
+
+/* ========================================================
+   LAB MANUAL & THEORY DRAWER
+   ======================================================== */
+.manual-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .manual-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.manual-sidebar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.manual-nav-item {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.manual-nav-item:hover, .manual-nav-item.active {
+  background: #1e293b;
+  color: var(--primary);
+}
+
+.manual-content-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.manual-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formula-card {
+  background: #090d16;
+  border-left: 4px solid var(--primary);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+.formula-card .label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+
+.formula-card .math {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.92rem;
+  color: #f1f5f9;
+}
+
+.viva-item {
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.viva-q {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.viva-a {
+  font-size: 0.84rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  border-top: 1px dashed #334155;
+  padding-top: 8px;
+}
+
+/* ========================================================
+   FORMAL PRINTABLE LAB REPORT STYLING
+   ======================================================== */
+.report-paper {
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.report-header {
+  border-bottom: 3px double #0f172a;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.report-header h2 {
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.report-header p {
+  font-size: 0.88rem;
+  color: #475569;
+}
+
+.report-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+}
+
+.report-section {
+  margin-bottom: 20px;
+}
+
+.report-section h3 {
+  font-size: 1.05rem;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-bottom: 20px;
+}
+
+.report-table th, .report-table td {
+  border: 1px solid #94a3b8;
+  padding: 8px;
+  text-align: center;
+}
+
+.report-table th {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.report-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid #cbd5e1;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .lab-header, .tab-nav, .table-toolbar, .btn {
+    display: none !important;
+  }
+  .report-paper {
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}

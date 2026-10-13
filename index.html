@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrical Machines & Drives Virtual Laboratory Simulator</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Lab Header -->
+  <header class="lab-header">
+    <div class="lab-title-area">
+      <div class="lab-icon-badge">⚡</div>
+      <div class="lab-title-text">
+        <h1>ELECTRICAL MACHINES & DRIVES VIRTUAL LAB</h1>
+        <span>Interactive Testing & Simulation Bench • Dept. of Electrical Engineering</span>
+      </div>
+    </div>
+
+    <!-- Experiment Switcher -->
+    <div class="exp-dropdown-wrapper">
+      <select id="experimentSelect" class="exp-select" aria-label="Select Electrical Lab Experiment">
+        <!-- Dynamically populated from LAB_EXPERIMENTS -->
+      </select>
+    </div>
+
+    <!-- Power & Audio Quick Status -->
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span id="powerStatusPill" class="status-pill off">DE-ENERGIZED</span>
+      <button id="btnSoundToggle" class="btn btn-secondary" title="Toggle Lab Sound Effects">🔊 Audio: ON</button>
+      <button id="btnPrintReport" class="btn btn-primary" title="Print Formal Lab Report">🖨️ Lab Report</button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="benchTab">⚡ Virtual Bench & Rigging</button>
+    <button class="tab-btn" data-tab="manualTab">📖 Lab Manual & Theory</button>
+    <button class="tab-btn" data-tab="tableTab">📊 Observation Table & Calculations</button>
+    <button class="tab-btn" data-tab="curvesTab">📈 Performance Curves</button>
+    <button class="tab-btn" data-tab="reportTab">📜 Formal Lab Report</button>
+  </nav>
+
+  <!-- Main Viewports -->
+  <main class="main-content">
+
+    <!-- ========================================================
+         TAB 1: VIRTUAL BENCH & RIGGING
+         ======================================================== -->
+    <section id="benchTab" class="tab-pane active">
+      <div class="bench-grid">
+
+        <!-- Left Column: Bench Main (Meters, Stage, Wiring) -->
+        <div class="bench-main-panel">
+
+          <!-- 1. Top Instrument Rack -->
+          <div class="meters-rack">
+
+            <!-- Voltmeter -->
+            <div class="meter-unit">
+              <div class="meter-header">Voltmeter (V)</div>
+              <div class="analog-dial-box">
+                <svg class="analog-dial-svg" viewBox="0 0 100 60">
+                  <path d="M 15 50 A 40 40 0 0 1 85 50" fill="none" stroke="#475569" stroke-width="3" />
+                  <path d="M 65 20 A 40 40 0 0 1 85 50" fill="none" stroke="#ef4444" stroke-width="3" />
+                  <line id="needleVolt" x1="50" y1="50" x2="50" y2="15" stroke="#ef4444" stroke-width="2" stroke-linecap="round" transform="rotate(-50 50 50)" />
+                  <circle cx="50" cy="50" r="4" fill="#cbd5e1" />
+                </svg>
+              </div>
+              <div class="digital-display"><span id="meterVoltVal">0.0</span> <span class="digital-unit">V</span></div>
+            </div>
+
+            <!-- Line Ammeter -->
+            <div class="meter-unit">
+              <div class="meter-header">Line Current (IL)</div>
+              <div class="analog-dial-box">
+                <svg class="analog-dial-svg" viewBox="0 0 100 60">
+                  <path d="M 15 50 A 40 40 0 0 1 85 50" fill="none" stroke="#475569" stroke-width="3" />
+                  <path d="M 70 24 A 40 40 0 0 1 85 50" fill="none" stroke="#ef4444" stroke-width="3" />
+                  <line id="needleCurr" x1="50" y1="50" x2="50" y2="15" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" transform="rotate(-50 50 50)" />
+                  <circle cx="50" cy="50" r="4" fill="#cbd5e1" />
+                </svg>
+              </div>
+              <div class="digital-display"><span id="meterLineCurrVal">0.00</span> <span class="digital-unit">A</span></div>
+            </div>
+
+            <!-- Field Ammeter -->
+            <div class="meter-unit">
+              <div class="meter-header">Field Current (If)</div>
+              <div class="analog-dial-box">
+                <svg class="analog-dial-svg" viewBox="0 0 100 60">
+                  <path d="M 15 50 A 40 40 0 0 1 85 50" fill="none" stroke="#475569" stroke-width="3" />
+                  <line id="needleField" x1="50" y1="50" x2="50" y2="15" stroke="#10b981" stroke-width="2" stroke-linecap="round" transform="rotate(-50 50 50)" />
+                  <circle cx="50" cy="50" r="4" fill="#cbd5e1" />
+                </svg>
+              </div>
+              <div class="digital-display"><span id="meterFieldCurrVal">0.00</span> <span class="digital-unit">A</span></div>
+            </div>
+
+            <!-- Digital Optical Tachometer -->
+            <div class="meter-unit">
+              <div class="meter-header">Tachometer (Speed)</div>
+              <div style="height: 60px; display: flex; align-items: center; justify-content: center; font-size: 26px;">
+                🔄
+              </div>
+              <div class="digital-display" style="color: #4ade80;"><span id="meterSpeedVal">0</span> <span class="digital-unit">RPM</span></div>
+            </div>
+
+            <!-- Torque Meter -->
+            <div class="meter-unit">
+              <div class="meter-header">Brake Torque</div>
+              <div style="height: 60px; display: flex; align-items: center; justify-content: center; font-size: 26px;">
+                ⚖️
+              </div>
+              <div class="digital-display" style="color: #f59e0b;"><span id="meterTorqueVal">0.00</span> <span class="digital-unit">N·m</span></div>
+            </div>
+
+            <!-- Wattmeter 1 -->
+            <div class="meter-unit">
+              <div class="meter-header">Wattmeter W1</div>
+              <div style="height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #a78bfa;">
+                W₁
+              </div>
+              <div class="digital-display"><span id="meterW1Val">0</span> <span class="digital-unit">W</span></div>
+            </div>
+
+            <!-- Wattmeter 2 -->
+            <div class="meter-unit">
+              <div class="meter-header">Wattmeter W2</div>
+              <div style="height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #a78bfa;">
+                W₂
+              </div>
+              <div class="digital-display"><span id="meterW2Val">0</span> <span class="digital-unit">W</span></div>
+            </div>
+
+          </div>
+
+          <!-- 2. Interactive Machinery Stage & Rotation Inspection Window -->
+          <div class="machinery-stage-wrapper">
+
+            <!-- Machinery Stage Top Toolbar / HUD -->
+            <div class="machinery-hud">
+              <div class="hud-left">
+                <span class="hud-badge-title">⚙️ ROTATION INSPECTOR</span>
+                <div class="hud-metric">
+                  <span class="hud-label">Speed (ω):</span>
+                  <span id="hudOmegaVal" class="hud-val" style="color: #38bdf8;">0.0 rad/s</span>
+                </div>
+                <div class="hud-metric">
+                  <span class="hud-label">RPM:</span>
+                  <span id="hudRpmVal" class="hud-val" style="color: #4ade80;">0 RPM</span>
+                </div>
+                <div class="hud-metric">
+                  <span class="hud-label">Rotations:</span>
+                  <span id="hudRevsVal" class="hud-val" style="color: #f59e0b;">0 revs</span>
+                </div>
+              </div>
+
+              <!-- Optical Tachometer Beam Indicator -->
+              <div class="hud-center">
+                <div class="strobe-indicator">
+                  <span class="strobe-led" id="strobeLed"></span>
+                  <span class="strobe-text">Optical Sensor</span>
+                </div>
+                <div class="rot-direction-badge">
+                  <span id="hudRotArrow" class="rot-arrow">↻</span>
+                  <span id="hudRotStatus">STOPPED</span>
+                </div>
+              </div>
+
+              <!-- Visual Controls (View Mode & Slow Motion) -->
+              <div class="hud-right">
+                <div class="hud-btn-group">
+                  <button id="btnViewSide" class="hud-toggle-btn active" title="Side Mechanical Drive View">⚙️ Side Drive</button>
+                  <button id="btnViewCutaway" class="hud-toggle-btn" title="Internal Stator-Rotor Cutaway View">🔬 Rotor Cutaway</button>
+                </div>
+                <div class="hud-btn-group">
+                  <button id="btnSpeed1x" class="hud-toggle-btn active" title="Real Time Speed">1.0x</button>
+                  <button id="btnSpeed025x" class="hud-toggle-btn" title="Slow Motion (0.25x)">0.25x Slow</button>
+                  <button id="btnSpeed005x" class="hud-toggle-btn" title="Ultra Slow (0.05x)">0.05x</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Viewport Container -->
+            <div class="machinery-stage">
+
+              <!-- VIEW A: Side Mechanical Assembly View -->
+              <div id="sideAssemblyView" class="assembly-view active">
+
+                <!-- 1. Motor Cooling Fan Housing (Left) -->
+                <div class="fan-cowl-box">
+                  <div class="fan-housing">
+                    <svg id="coolingFanSvg" class="cooling-fan-svg" viewBox="0 0 100 100">
+                      <!-- 6 Aerodynamic Fan Blades -->
+                      <g id="coolingFanBlades" transform-origin="50 50">
+                        <path d="M 50 50 C 40 30, 30 15, 50 5 C 60 15, 55 35, 50 50 Z" fill="#38bdf8" opacity="0.85" />
+                        <path d="M 50 50 C 70 40, 85 30, 95 50 C 85 60, 65 55, 50 50 Z" fill="#38bdf8" opacity="0.85" />
+                        <path d="M 50 50 C 60 70, 70 85, 50 95 C 40 85, 45 65, 50 50 Z" fill="#38bdf8" opacity="0.85" />
+                        <path d="M 50 50 C 30 60, 15 70, 5 50 C 15 40, 35 45, 50 50 Z" fill="#38bdf8" opacity="0.85" />
+                        <path d="M 50 50 C 32 38, 20 25, 30 12 C 45 18, 45 35, 50 50 Z" fill="#0284c7" opacity="0.85" />
+                        <path d="M 50 50 C 68 62, 80 75, 70 88 C 55 82, 55 65, 50 50 Z" fill="#0284c7" opacity="0.85" />
+                        <circle cx="50" cy="50" r="14" fill="#0f172a" stroke="#64748b" stroke-width="2" />
+                        <circle cx="50" cy="50" r="6" fill="#38bdf8" />
+                      </g>
+                    </svg>
+                    <!-- Air Flow Intake Grill Lines -->
+                    <div class="fan-grill"></div>
+                  </div>
+                  <div class="fan-label">Cooling Fan</div>
+                </div>
+
+                <!-- 2. Motor Main Stator Body -->
+                <div class="motor-body">
+                  <div class="motor-terminal-box">
+                    <span class="term-wire w-red"></span>
+                    <span class="term-wire w-blue"></span>
+                    <span class="term-wire w-black"></span>
+                  </div>
+                  <div class="motor-fins">
+                    <div class="motor-fin"></div>
+                    <div class="motor-fin"></div>
+                    <div class="motor-fin"></div>
+                    <div class="motor-fin"></div>
+                  </div>
+                  <div id="motorNameplate" class="motor-nameplate-plate">
+                    <strong>DC SHUNT MOTOR</strong><br>
+                    5.0 HP | 220V | 1500 RPM
+                  </div>
+                </div>
+
+                <!-- 3. Cylindrical Rotating Shaft with Keyway & Tachometer Laser -->
+                <div class="shaft-coupling-zone">
+                  <div class="tachometer-sensor-mount">
+                    <div class="tacho-laser-emitter">
+                      <span class="tacho-lens"></span>
+                      <span class="tacho-laser-beam" id="tachoLaserBeam"></span>
+                    </div>
+                    <div class="tacho-text">Optical Sensor</div>
+                  </div>
+
+                  <div id="motorShaft" class="motor-shaft">
+                    <!-- Rotating cylindrical striped reflection -->
+                    <div class="shaft-cylinder-pattern" id="shaftPattern"></div>
+                    <!-- 3D Keyway that rotates around the shaft perimeter -->
+                    <div class="shaft-keyway-strip" id="shaftKeywayStrip"></div>
+                    <!-- Reflective tachometer target marker -->
+                    <div class="shaft-reflector-marker" id="shaftReflector"></div>
+                  </div>
+                </div>
+
+                <!-- 4. Rotating Mechanical Brake Drum & Stroboscope Pulley (SVG) -->
+                <div class="brake-assembly-zone">
+                  <div class="brake-drum-assembly" id="brakeDrumContainer">
+                    <svg class="brake-drum-svg" viewBox="0 0 160 160">
+                      <defs>
+                        <radialGradient id="drumRimGrad" cx="50%" cy="50%" r="50%">
+                          <stop offset="60%" stop-color="#334155" />
+                          <stop offset="85%" stop-color="#475569" />
+                          <stop offset="100%" stop-color="#1e293b" />
+                        </radialGradient>
+                      </defs>
+
+                      <!-- Outer Heavy Cast-Iron Rim -->
+                      <circle cx="80" cy="80" r="76" fill="url(#drumRimGrad)" stroke="#64748b" stroke-width="4" />
+                      <!-- Thermal Friction Glow Ring -->
+                      <circle cx="80" cy="80" r="76" fill="none" stroke="#ef4444" stroke-width="4" id="frictionGlowRing" opacity="0" filter="blur(2px)" />
+
+                      <!-- Rotating Inner Assembly (Spokes + Strobe Quadrants + Marker) -->
+                      <g id="brakePulleySpokes" transform-origin="80 80">
+                        <!-- 4 Stroboscopic High-Contrast Quadrants -->
+                        <path d="M 80 80 L 80 14 A 66 66 0 0 1 146 80 Z" fill="rgba(255, 255, 255, 0.08)" />
+                        <path d="M 80 80 L 80 146 A 66 66 0 0 1 14 80 Z" fill="rgba(255, 255, 255, 0.08)" />
+
+                        <!-- 6 Cast-Iron Curved Spokes -->
+                        <line x1="80" y1="80" x2="80" y2="16" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" />
+                        <line x1="80" y1="80" x2="80" y2="144" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" />
+                        <line x1="80" y1="80" x2="24" y2="48" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" />
+                        <line x1="80" y1="80" x2="136" y2="112" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" />
+                        <line x1="80" y1="80" x2="24" y2="112" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" />
+                        <line x1="80" y1="80" x2="136" y2="48" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" />
+
+                        <!-- 6 Spoke Relief Cutouts -->
+                        <circle cx="50" cy="50" r="8" fill="#090d16" />
+                        <circle cx="110" cy="50" r="8" fill="#090d16" />
+                        <circle cx="50" cy="110" r="8" fill="#090d16" />
+                        <circle cx="110" cy="110" r="8" fill="#090d16" />
+
+                        <!-- High-Visibility Neon Rotation Tracking Marker Dot -->
+                        <circle cx="80" cy="22" r="7" fill="#38bdf8" stroke="#ffffff" stroke-width="2" />
+                        <circle cx="80" cy="22" r="3" fill="#ffffff" />
+                        <line x1="80" y1="14" x2="80" y2="30" stroke="#f59e0b" stroke-width="3" />
+
+                        <!-- Center Shaft Bearing Hub -->
+                        <circle cx="80" cy="80" r="24" fill="#1e293b" stroke="#cbd5e1" stroke-width="3" />
+                        <circle cx="80" cy="80" r="14" fill="#0f172a" />
+                        <!-- Shaft Key Slot -->
+                        <rect x="76" y="66" width="8" height="12" fill="#38bdf8" />
+                      </g>
+
+                      <!-- Static Rotation Direction Arc Guide Overlay -->
+                      <path d="M 125 40 A 68 68 0 0 1 140 85" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4,4" />
+                      <polygon points="144,80 140,94 133,83" fill="#38bdf8" />
+                    </svg>
+
+                    <!-- Brake Belt Wrapped Around Drum -->
+                    <div class="brake-belt">
+                      <div class="belt-stripes" id="beltStripes"></div>
+                    </div>
+                  </div>
+
+                  <div class="drum-caption">Brake Drum Pulley (r = 12 cm)</div>
+                </div>
+
+                <!-- 5. Dual Spring Balance Tension Rig -->
+                <div class="spring-balance-rig">
+                  <div class="balance-gauge">
+                    <span style="color: #94a3b8;">Tight Side (S1):</span>
+                    <span id="s1Val" style="color: #f59e0b; font-weight: 700;">0.0 kg</span>
+                  </div>
+                  <div class="balance-gauge">
+                    <span style="color: #94a3b8;">Slack Side (S2):</span>
+                    <span id="s2Val" style="color: #f59e0b; font-weight: 700;">0.0 kg</span>
+                  </div>
+                  <div class="balance-gauge" style="border-color: #38bdf8;">
+                    <span style="color: #94a3b8;">Net Tension:</span>
+                    <span id="sDiffVal" style="color: #38bdf8; font-weight: 700;">0.0 kg</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- VIEW B: Rotor Cross-Section Cutaway View -->
+              <div id="cutawayView" class="assembly-view" style="display: none;">
+                <div class="cutaway-container">
+                  <div class="cutaway-svg-box">
+                    <svg class="cutaway-svg" viewBox="0 0 320 320">
+                      <!-- Outer Stator Frame & Yoke -->
+                      <circle cx="160" cy="160" r="150" fill="#0f172a" stroke="#475569" stroke-width="8" />
+
+                      <!-- 4 Stator Field Poles (N, S, N, S) with Windings -->
+                      <!-- Top Pole (North) -->
+                      <rect x="135" y="18" width="50" height="42" fill="#334155" stroke="#64748b" stroke-width="2" />
+                      <rect x="125" y="24" width="70" height="26" fill="#b45309" stroke="#d97706" stroke-width="1.5" />
+                      <text x="160" y="55" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">N</text>
+
+                      <!-- Bottom Pole (South) -->
+                      <rect x="135" y="260" width="50" height="42" fill="#334155" stroke="#64748b" stroke-width="2" />
+                      <rect x="125" y="270" width="70" height="26" fill="#b45309" stroke="#d97706" stroke-width="1.5" />
+                      <text x="160" y="275" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">S</text>
+
+                      <!-- Left Pole (South) -->
+                      <rect x="18" y="135" width="42" height="50" fill="#334155" stroke="#64748b" stroke-width="2" />
+                      <rect x="24" y="125" width="26" height="70" fill="#b45309" stroke="#d97706" stroke-width="1.5" />
+                      <text x="55" y="165" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">S</text>
+
+                      <!-- Right Pole (North) -->
+                      <rect x="260" y="135" width="42" height="50" fill="#334155" stroke="#64748b" stroke-width="2" />
+                      <rect x="270" y="125" width="26" height="70" fill="#b45309" stroke="#d97706" stroke-width="1.5" />
+                      <text x="265" y="165" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">N</text>
+
+                      <!-- Magnetic Air Gap Ring -->
+                      <circle cx="160" cy="160" r="98" fill="none" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" />
+
+                      <!-- Rotating Rotor / Armature Core (Spins in sync) -->
+                      <g id="cutawayRotorDisc" transform-origin="160 160">
+                        <!-- Laminated Iron Rotor Disc -->
+                        <circle cx="160" cy="160" r="94" fill="#1e293b" stroke="#0284c7" stroke-width="3" />
+
+                        <!-- 16 Rotor Slots with Copper Conductors -->
+                        <g id="rotorSlotsGroup">
+                          <circle cx="160" cy="74" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="160" cy="246" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="74" cy="160" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="246" cy="160" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+
+                          <circle cx="199" cy="76" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="121" cy="76" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="199" cy="244" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="121" cy="244" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+
+                          <circle cx="230" cy="107" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="90" cy="107" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="230" cy="213" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="90" cy="213" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+
+                          <circle cx="244" cy="140" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="76" cy="140" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="244" cy="180" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                          <circle cx="76" cy="180" r="5" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
+                        </g>
+
+                        <!-- Stroboscopic Contrast Spokes on Rotor Face -->
+                        <line x1="160" y1="160" x2="160" y2="70" stroke="#f8fafc" stroke-width="2.5" />
+                        <line x1="160" y1="160" x2="250" y2="160" stroke="#f8fafc" stroke-width="1.5" stroke-dasharray="2,2" />
+                        <line x1="160" y1="160" x2="160" y2="250" stroke="#f8fafc" stroke-width="1.5" stroke-dasharray="2,2" />
+                        <line x1="160" y1="160" x2="70" y2="160" stroke="#f8fafc" stroke-width="1.5" stroke-dasharray="2,2" />
+
+                        <!-- High-Contrast Optical Marker Pin on Rotor -->
+                        <circle cx="160" cy="80" r="7" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+
+                        <!-- Shaft & Keyway in Center -->
+                        <circle cx="160" cy="160" r="28" fill="#334155" stroke="#94a3b8" stroke-width="3" />
+                        <rect x="156" y="136" width="8" height="16" fill="#38bdf8" />
+                        <circle cx="160" cy="160" r="12" fill="#0f172a" />
+                      </g>
+
+                      <!-- Rotation Direction Indicator Over Air Gap -->
+                      <path d="M 200 95 A 80 80 0 0 1 245 160" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="4,4" />
+                      <polygon points="248,154 245,166 238,156" fill="#22c55e" />
+                      <text x="215" y="115" fill="#22c55e" font-size="11" font-weight="bold">↻ CW</text>
+                    </svg>
+                  </div>
+
+                  <!-- Cutaway Info Box -->
+                  <div class="cutaway-legend">
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">Cross-Sectional Electromagnetic Action</h4>
+                    <div class="legend-item"><span class="leg-dot" style="background: #0284c7;"></span> <strong>Stator Pole Shoes (N/S)</strong>: Creates stationary magnetic field flux Φ</div>
+                    <div class="legend-item"><span class="leg-dot" style="background: #f59e0b;"></span> <strong>Rotor Conductor Bars</strong>: Induced current carries Lorentz torque $T = k \Phi I_a$</div>
+                    <div class="legend-item"><span class="leg-dot" style="background: #ef4444;"></span> <strong>Optical Tracking Marker</strong>: Traces real angular rotation & displacement θ</div>
+                    <div class="legend-item"><span class="leg-dot" style="background: #22c55e;"></span> <strong>Clockwise Motoring</strong>: Accelerates smoothly up to rated speed</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- 3. Interactive Wiring & Schematic Canvas -->
+          <div class="wiring-section">
+            <div class="wiring-toolbar">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <span style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1;">Lead Color:</span>
+                <div class="wire-color-picker">
+                  <div class="color-dot active" data-color="#ef4444" style="background: #ef4444;" title="Red (+)"></div>
+                  <div class="color-dot" data-color="#0f172a" style="background: #1e293b; border: 1px solid #64748b;" title="Black (-)"></div>
+                  <div class="color-dot" data-color="#38bdf8" style="background: #38bdf8;" title="Blue"></div>
+                  <div class="color-dot" data-color="#f59e0b" style="background: #f59e0b;" title="Yellow"></div>
+                  <div class="color-dot" data-color="#10b981" style="background: #10b981;" title="Green (Earth)"></div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <button id="btnAutoWire" class="btn btn-secondary" title="Instantly wire all standard terminals">🔌 Auto-Wire Circuit</button>
+                <button id="btnClearWire" class="btn btn-secondary" title="Remove all wires">🗑️ Clear Wires</button>
+                <button id="btnVerifyCircuit" class="btn btn-primary" title="Check circuit continuity and correctness">✓ Verify Connections</button>
+              </div>
+            </div>
+
+            <canvas id="wiringCanvas" style="width: 100%; height: 480px; display: block;"></canvas>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Hardware Controls Panel -->
+        <div class="bench-controls-panel">
+
+          <!-- Main Power Knife Switch -->
+          <div class="panel-block">
+            <div class="panel-block-title">
+              <span>Main Supply Switch</span>
+              <span style="font-size: 0.75rem; color: #38bdf8;">DPST / TPST</span>
+            </div>
+            <button id="powerSwitchBtn" class="btn btn-success switch-control-btn">ENERGIZE MAINS</button>
+            <span style="font-size: 0.75rem; color: #94a3b8; text-align: center;">Safety Interlocked: Requires verified wiring</span>
+          </div>
+
+          <!-- 3-Point / 4-Point Starter (DC Motors) -->
+          <div id="starterBlock" class="panel-block">
+            <div class="panel-block-title">
+              <span>3-Point Starter</span>
+              <span id="starterStatusLabel" style="font-size: 0.75rem; color: #38bdf8;">OFF</span>
+            </div>
+            <div class="starter-widget">
+              <div class="starter-studs">
+                <div class="starter-stud" title="OFF"></div>
+                <div class="starter-stud" title="Stud 1 (15Ω)"></div>
+                <div class="starter-stud" title="Stud 2 (8Ω)"></div>
+                <div class="starter-stud" title="Stud 3 (3Ω)"></div>
+                <div class="starter-stud" title="RUN (0Ω)"></div>
+              </div>
+              <input type="range" id="starterSlider" min="0" max="4" step="1" value="0" class="starter-handle-slider" aria-label="Starter Handle Position">
+            </div>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Move handle smoothly from OFF to RUN to limit starting current.</span>
+          </div>
+
+          <!-- 3-Phase Variac (Induction & Transformers) -->
+          <div id="variacBlock" class="panel-block" style="display: none;">
+            <div class="panel-block-title">
+              <span>3-Phase Variac</span>
+              <span id="variacVal" style="color: #38bdf8;">0 %</span>
+            </div>
+            <input type="range" id="variacSlider" min="0" max="100" step="1" value="0" class="range-slider" aria-label="Variac Voltage Ratio">
+            <span style="font-size: 0.72rem; color: #94a3b8;">Adjusts 3-phase AC voltage (0 - 415 V).</span>
+          </div>
+
+          <!-- Field Rheostat Control -->
+          <div class="panel-block">
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span>Field Rheostat (Rf)</span>
+                <span id="fieldRheoVal" style="color: #38bdf8;">0 Ω</span>
+              </div>
+              <input type="range" id="fieldRheoSlider" min="0" max="300" step="5" value="0" class="range-slider" aria-label="Field Rheostat Resistance">
+            </div>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Controls field current If & flux Φ (Speed increases as Rf increases).</span>
+          </div>
+
+          <!-- Armature Rheostat Control -->
+          <div id="armRheoBlock" class="panel-block">
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span>Armature Rheostat (Ra)</span>
+                <span id="armRheoVal" style="color: #38bdf8;">0.0 Ω</span>
+              </div>
+              <input type="range" id="armRheoSlider" min="0" max="20" step="0.5" value="0" class="range-slider" aria-label="Armature Rheostat Resistance">
+            </div>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Armature resistance control (Speed drops below rated).</span>
+          </div>
+
+          <!-- Mechanical Brake Loading Wheels -->
+          <div class="panel-block">
+            <div class="panel-block-title">
+              <span>Brake Drum Loading</span>
+              <span style="font-size: 0.75rem; color: #f59e0b;">Mechanical Load</span>
+            </div>
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span>Tension Screw S1 (Tighten)</span>
+              </div>
+              <input type="range" id="s1Slider" min="0" max="20" step="0.5" value="0" class="range-slider" aria-label="Spring Balance S1">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span>Slack Side S2</span>
+              </div>
+              <input type="range" id="s2Slider" min="0" max="6" step="0.5" value="0" class="range-slider" aria-label="Spring Balance S2">
+            </div>
+
+            <!-- Quick Load Presets -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 6px;">
+              <button id="btnPresetNoLoad" class="btn btn-secondary" style="font-size: 0.72rem; padding: 6px;">0% Load</button>
+              <button id="btnPresetHalfLoad" class="btn btn-secondary" style="font-size: 0.72rem; padding: 6px;">50% Load</button>
+              <button id="btnPresetFullLoad" class="btn btn-secondary" style="font-size: 0.72rem; padding: 6px;">100% Load</button>
+            </div>
+          </div>
+
+          <!-- Observation Logger Trigger -->
+          <div class="panel-block" style="background: linear-gradient(180deg, #111827 0%, #090d16 100%);">
+            <button id="btnRecordObs" class="btn btn-primary" style="padding: 12px; font-size: 0.95rem; font-weight: 700;">
+              📝 RECORD OBSERVATION POINT
+            </button>
+            <span style="font-size: 0.72rem; color: #94a3b8; text-align: center;">Captures instantaneous meter values to observation table</span>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 2: LAB MANUAL & THEORY
+         ======================================================== -->
+    <section id="manualTab" class="tab-pane">
+      <div class="manual-container">
+
+        <!-- Manual Navigation -->
+        <div class="manual-sidebar">
+          <div class="manual-nav-item active" onclick="document.getElementById('secAim').scrollIntoView({behavior:'smooth'})">🎯 Aim & Objectives</div>
+          <div class="manual-nav-item" onclick="document.getElementById('secApparatus').scrollIntoView({behavior:'smooth'})">🧰 Apparatus Required</div>
+          <div class="manual-nav-item" onclick="document.getElementById('secProcedure').scrollIntoView({behavior:'smooth'})">📋 Experimental Procedure</div>
+          <div class="manual-nav-item" onclick="document.getElementById('secFormulae').scrollIntoView({behavior:'smooth'})">📐 Mathematical Equations</div>
+          <div class="manual-nav-item" onclick="document.getElementById('secViva').scrollIntoView({behavior:'smooth'})">💡 Viva-Voce Questions</div>
+        </div>
+
+        <!-- Manual Content -->
+        <div class="manual-content-card">
+
+          <div id="secAim">
+            <div class="manual-section-title">🎯 Aim of the Experiment</div>
+            <p id="manualAim" style="line-height: 1.6; color: #cbd5e1; margin-top: 10px;"></p>
+          </div>
+
+          <div id="secApparatus">
+            <div class="manual-section-title">🧰 Apparatus & Instruments Required</div>
+            <ul id="manualApparatus" style="margin-left: 20px; line-height: 1.8; color: #cbd5e1; margin-top: 10px;"></ul>
+          </div>
+
+          <div id="secProcedure">
+            <div class="manual-section-title">📋 Step-by-Step Procedure</div>
+            <ol id="manualProcedure" style="margin-left: 20px; line-height: 1.8; color: #cbd5e1; margin-top: 10px;"></ol>
+          </div>
+
+          <div id="secFormulae">
+            <div class="manual-section-title">📐 Governing Formulae & Calculations</div>
+            <div id="manualFormulae" style="margin-top: 10px;"></div>
+          </div>
+
+          <div id="secViva">
+            <div class="manual-section-title">💡 Viva-Voce Questions & Explanations</div>
+            <div id="manualViva" style="margin-top: 10px;"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 3: OBSERVATION TABLE & CALCULATIONS
+         ======================================================== -->
+    <section id="tableTab" class="tab-pane">
+      <div class="table-panel">
+
+        <div class="table-toolbar">
+          <div style="font-size: 1.05rem; font-weight: 700;">Live Laboratory Observation Log</div>
+          <div style="display: flex; gap: 8px;">
+            <button id="btnCalcObs" class="btn btn-primary">⚡ Compute Formula Columns</button>
+            <button id="btnExportCSV" class="btn btn-secondary">📥 Export CSV</button>
+            <button id="btnClearTable" class="btn btn-danger">🗑️ Clear Table</button>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr id="tableHeadRow">
+                <!-- Dynamically populated from active experiment columns -->
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Dynamically populated from recorded observations -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 4: PERFORMANCE CURVES
+         ======================================================== -->
+    <section id="curvesTab" class="tab-pane">
+      <div class="table-panel">
+
+        <div class="table-toolbar">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 0.95rem; font-weight: 700;">Select Characteristic Curve:</span>
+            <select id="graphPresetSelect" class="exp-select" style="min-width: 280px;" aria-label="Select Performance Characteristic Curve">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <button id="btnExportGraph" class="btn btn-primary">📸 Export High-Res Plot (PNG)</button>
+        </div>
+
+        <!-- High-DPI Plotting Canvas -->
+        <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; overflow: hidden; padding: 10px;">
+          <canvas id="performanceChart" style="width: 100%; height: 380px; display: block;"></canvas>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 5: FORMAL LAB REPORT
+         ======================================================== -->
+    <section id="reportTab" class="tab-pane">
+      <div class="report-paper">
+
+        <div class="report-header">
+          <h2>DEPARTMENT OF ELECTRICAL & ELECTRONICS ENGINEERING</h2>
+          <p>LABORATORY EXPERIMENTAL TEST RECORD</p>
+        </div>
+
+        <div class="report-meta-grid">
+          <div><strong>Student Name:</strong> Student / Engineer</div>
+          <div><strong>Date of Experiment:</strong> <span id="repDate"></span></div>
+          <div><strong>Course:</strong> Electrical Machines & Drives Lab</div>
+          <div><strong>Status:</strong> Completed & Verified</div>
+        </div>
+
+        <div class="report-section">
+          <h3>EXPERIMENT TITLE</h3>
+          <p id="repTitle" style="font-size: 1.05rem; font-weight: 700; color: #0284c7;"></p>
+        </div>
+
+        <div class="report-section">
+          <h3>AIM OF THE EXPERIMENT</h3>
+          <p id="repAim" style="line-height: 1.5;"></p>
+        </div>
+
+        <div class="report-section">
+          <h3>TABULATION OF READINGS</h3>
+          <table class="report-table">
+            <thead>
+              <tr id="repTableHead"></tr>
+            </thead>
+            <tbody id="repTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="report-signatures">
+          <div>Student Signature: _______________________</div>
+          <div>Faculty / Lab Instructor: _______________________</div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="labToast" style="display: none; position: fixed; bottom: 25px; right: 25px; padding: 14px 22px; border-radius: 8px; color: #fff; font-size: 0.88rem; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; transition: all 0.3s;"></div>
+
+  <!-- Scripts -->
+  <script src="js/physics.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/experiments.js"></script>
+  <script src="js/wiring.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
